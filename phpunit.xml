@@ -16,7 +16,7 @@
          resolveDependencies="true"
 >
     <testsuites>
-        <testsuite name="Error Handler tests">
+        <testsuite name="Requester tests">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
