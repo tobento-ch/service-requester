@@ -26,6 +26,11 @@ use Traversable;
 class Requester implements RequesterInterface
 {
     /**
+     * @var null|AcceptHeader
+     */
+    protected null|AcceptHeader $acceptHeader = null;
+    
+    /**
      * Create a new Requester.
      *
      * @param ServerRequestInterface $request
@@ -112,6 +117,16 @@ class Requester implements RequesterInterface
     {
         return $this->isContentType('application/json');
     }
+    
+    /**
+     * Determine if the request is asking for JSON.
+     *
+     * @return bool
+     */
+    public function wantsJson(): bool
+    {
+        return $this->acceptHeader()->firstIs(mime: 'application/json');
+    }
 
     /**
      * Returns the JSON payload.
@@ -160,6 +175,20 @@ class Requester implements RequesterInterface
     }
     
     /**
+     * Returns the accept header instance.
+     *
+     * @return AcceptHeader
+     */
+    public function acceptHeader(): AcceptHeader
+    {
+        if (is_null($this->acceptHeader)) {
+            $this->acceptHeader = new AcceptHeader($this->request->getHeaderLine('Accept'));
+        }
+        
+        return $this->acceptHeader;
+    }
+    
+    /**
      * To Collection.
      * 
      * @param mixed $data
@@ -180,5 +209,5 @@ class Requester implements RequesterInterface
         }        
         
         return null;
-    }    
+    }
 }

@@ -16,6 +16,7 @@ namespace Tobento\Service\Requester\Test;
 use PHPUnit\Framework\TestCase;
 use Tobento\Service\Requester\Requester;
 use Tobento\Service\Requester\RequesterInterface;
+use Tobento\Service\Requester\AcceptHeader;
 use Tobento\Service\Collection\Collection;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -273,6 +274,38 @@ class RequesterTest extends TestCase
         );
     }
     
+    public function testWantsJsonMethodReturnsTrueIfAccepts()
+    {
+        $uri = (new Psr17Factory())->createUri(
+            uri: 'https://example.com',
+        );
+        
+        $serverRequest = (new Psr17Factory())->createServerRequest(
+            method: 'GET',
+            uri: $uri,
+        )->withAddedHeader('Accept', 'application/json, text/html');
+        
+        $requester = new Requester($serverRequest);
+        
+        $this->assertTrue($requester->wantsJson());
+    }
+    
+    public function testWantsJsonMethodReturnsFalseDoesNotAccept()
+    {
+        $uri = (new Psr17Factory())->createUri(
+            uri: 'https://example.com',
+        );
+        
+        $serverRequest = (new Psr17Factory())->createServerRequest(
+            method: 'GET',
+            uri: $uri,
+        )->withAddedHeader('Accept', 'text/html, application/json');
+        
+        $requester = new Requester($serverRequest);
+        
+        $this->assertFalse($requester->wantsJson());
+    }
+    
     public function testInputMethodWithGetMethod()
     {
         $uri = (new Psr17Factory())->createUri(
@@ -384,5 +417,34 @@ class RequesterTest extends TestCase
             ['foo' => 'foo'],
             $requester->input()->all()
         );
-    }     
+    }
+    
+    public function testAcceptHeaderMethod()
+    {
+        $uri = (new Psr17Factory())->createUri(
+            uri: 'https://example.com',
+        );
+        
+        $serverRequest = (new Psr17Factory())->createServerRequest(
+            method: 'GET',
+            uri: $uri,
+        )->withAddedHeader('Accept', 'text/html, application/json');
+        
+        $requester = new Requester($serverRequest);
+        
+        $this->assertInstanceof(
+            AcceptHeader::class,
+            $requester->acceptHeader(),
+        );
+        
+        $this->assertSame(
+            'text/html',
+            $requester->acceptHeader()->first()?->mime(),
+        );
+        
+        $this->assertSame(
+            2,
+            count($requester->acceptHeader()->all()),
+        );        
+    }    
 }
