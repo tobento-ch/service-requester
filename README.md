@@ -98,6 +98,15 @@ var_dump($requester->isJson());
 // bool(false)
 ```
 
+**wantsJson**
+
+Determine if the request is asking for JSON.
+
+```php
+var_dump($requester->wantsJson());
+// bool(false)
+```
+
 **json**
 
 Returns the request JSON payload.\
@@ -142,6 +151,46 @@ use Psr\Http\Message\ServerRequestInterface;
 
 var_dump($requester->request() instanceof ServerRequestInterface);
 // bool(true)
+```
+
+**acceptHeader**
+
+Returns the accept header instance.
+
+```php
+use Tobento\Service\Requester\AcceptHeader;
+use Tobento\Service\Requester\AcceptHeaderItem;
+
+var_dump($requester->acceptHeader() instanceof AcceptHeader);
+// bool(true)
+
+var_dump($requester->acceptHeader()->has('application/json'));
+// bool(true)
+
+var_dump($requester->acceptHeader()->get('application/json'));
+// null|AcceptHeaderItem
+
+// returns all items.
+$items = $requester->acceptHeader()->all();
+
+// returns the first item found or null.
+$firstItem = $requester->acceptHeader()->first();
+
+// returns true if first item is application/json, otherwise false.
+$requester->acceptHeader()->firstIs('application/json');
+
+// filter items returning a new instance.
+$acceptHeader = $requester->acceptHeader()->filter(
+    fn(AcceptHeaderItem $a): bool => $a->quality() > 0.5
+);
+
+// sort items returning a new instance.
+$acceptHeader = $requester->acceptHeader()->sort(
+    fn(AcceptHeaderItem $a, AcceptHeaderItem $b) => $b->quality() <=> $a->quality()
+);
+
+// sorts by highest quality returning a new instance.
+$acceptHeader = $requester->acceptHeader()->sortByQuality();
 ```
 
 # Credits
