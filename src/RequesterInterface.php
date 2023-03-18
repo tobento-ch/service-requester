@@ -71,6 +71,13 @@ interface RequesterInterface
      * @return bool
      */
     public function isJson(): bool;
+    
+    /**
+     * Determine if the request is asking for JSON.
+     *
+     * @return bool
+     */
+    public function wantsJson(): bool;
 
     /**
      * Returns the JSON payload.
@@ -85,4 +92,11 @@ interface RequesterInterface
      * @return Collection
      */
     public function input(): Collection;
+    
+    /**
+     * Returns the accept header instance.
+     *
+     * @return AcceptHeader
+     */
+    public function acceptHeader(): AcceptHeader;
 }
