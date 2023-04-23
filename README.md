@@ -80,6 +80,24 @@ var_dump($requester->isContentType('application/json'));
 // bool(false)
 ```
 
+**isReading**
+
+Determine if the HTTP request is a reading request which is the case if the method is one of HEAD, GET and OPTIONS.
+
+```php
+var_dump($requester->isReading());
+// bool(true)
+```
+
+**isPrefetch**
+
+Determine if the HTTP request is a prefetch call.
+
+```php
+var_dump($requester->isPrefetch());
+// bool(false)
+```
+
 **isAjax**
 
 Check if request was via AJAX.
