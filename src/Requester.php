@@ -97,6 +97,33 @@ class Requester implements RequesterInterface
         
         return strstr($requestContentType, $requestContentType) === $contentType;
     }
+    
+    /**
+     * Determine if the HTTP request is a reading request.
+     *
+     * @return bool
+     */
+    public function isReading(): bool
+    {
+        return in_array($this->method(), ['HEAD', 'GET', 'OPTIONS']);
+    }
+    
+    /**
+     * Determine if the HTTP request is a prefetch call.
+     *
+     * @return bool
+     */
+    public function isPrefetch(): bool
+    {
+        if (
+            $this->request->getHeaderLine('X-Moz') === 'prefetch'
+            || $this->request->getHeaderLine('X-Purpose') === 'prefetch'
+        ) {
+            return true;
+        }
+        
+        return false;
+    }
 
     /**
      * Check if request was via AJAX.

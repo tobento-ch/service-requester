@@ -57,6 +57,20 @@ interface RequesterInterface
      * @return bool
      */
     public function isContentType(string $contentType): bool;
+    
+    /**
+     * Determine if the HTTP request is a reading request.
+     *
+     * @return bool
+     */
+    public function isReading(): bool;
+    
+    /**
+     * Determine if the HTTP request is a prefetch call.
+     *
+     * @return bool
+     */
+    public function isPrefetch(): bool;
 
     /**
      * Check if request was via AJAX.

@@ -132,6 +132,45 @@ class RequesterTest extends TestCase
         );
     }
     
+    public function testIsReadingMethod()
+    {
+        $serverRequest = (new Psr17Factory())->createServerRequest(
+            method: 'GET',
+            uri: (new Psr17Factory())->createUri('https://example.com'),
+        );
+        
+        $requester = new Requester($serverRequest);
+        
+        $this->assertTrue($requester->isReading());
+        $this->assertTrue((new Requester($serverRequest->withMethod('HEAD')))->isReading());
+        $this->assertTrue((new Requester($serverRequest->withMethod('OPTIONS')))->isReading());
+        $this->assertFalse((new Requester($serverRequest->withMethod('POST')))->isReading());
+        $this->assertFalse((new Requester($serverRequest->withMethod('PUT')))->isReading());
+        $this->assertFalse((new Requester($serverRequest->withMethod('PATCH')))->isReading());
+        $this->assertFalse((new Requester($serverRequest->withMethod('TRACE')))->isReading());
+        $this->assertFalse((new Requester($serverRequest->withMethod('CONNECT')))->isReading());
+    }
+    
+    public function testIsPrefetchMethod()
+    {
+        $serverRequest = (new Psr17Factory())->createServerRequest(
+            method: 'GET',
+            uri: (new Psr17Factory())->createUri('https://example.com'),
+        );
+        
+        $requester = new Requester($serverRequest);
+        
+        $this->assertFalse($requester->isPrefetch());
+        
+        $this->assertTrue(
+            (new Requester($serverRequest->withAddedHeader('X-Moz', 'prefetch')))->isPrefetch()
+        );
+        
+        $this->assertTrue(
+            (new Requester($serverRequest->withAddedHeader('X-Purpose', 'prefetch')))->isPrefetch()
+        );
+    }
+    
     public function testIsAjaxMethod()
     {
         $uri = (new Psr17Factory())->createUri(
